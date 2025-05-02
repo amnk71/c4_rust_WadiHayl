@@ -32,6 +32,16 @@ impl VM {
                     let b = self.stack.pop().unwrap();
                     self.stack.push(b - a);
                 }
+                Instruction::Mul => {
+                    let a = self.stack.pop().unwrap();
+                    let b = self.stack.pop().unwrap();
+                    self.stack.push(b * a);
+                }
+                Instruction::Div => {
+                    let a = self.stack.pop().unwrap();
+                    let b = self.stack.pop().unwrap();
+                    self.stack.push(b / a);
+                }
                 // ... (other instructions)
                 _ => panic!("Unknown instruction"),
             }
