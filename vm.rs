@@ -4,7 +4,7 @@ pub enum Instruction {
     Sub,
     Mul,
     Div,
-    // ... (other instructions)
+  
 }
 
 pub struct VM {
@@ -42,7 +42,7 @@ impl VM {
                     let b = self.stack.pop().unwrap();
                     self.stack.push(b / a);
                 }
-                // ... (other instructions)
+          
     
             }
             self.pc += 1;
