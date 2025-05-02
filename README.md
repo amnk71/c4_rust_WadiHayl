@@ -17,3 +17,6 @@ Example:
 Parser error on line 1: Unexpected token: "@"
 
 Tests are included to ensure this behavior is consistent and reliable.
+
+Bonus feature tested to work, is called test_invalid_token_error 
+![image](https://github.com/user-attachments/assets/4ab74616-266d-4a1b-b5a6-ce52a2746a88)
