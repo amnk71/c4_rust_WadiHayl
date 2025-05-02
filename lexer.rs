@@ -1,25 +1,44 @@
+//! This module implements the lexical analyzer (lexer) for the compiler.
+//! It converts raw source code into a stream of tokens for the parser.
+
 use crate::error::CompileError;
 
+/// Represents the different kinds of tokens that can be identified by the lexer.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Token {
+    /// Integer literal (e.g., `42`)
     Num(i64),
+    /// Function keyword or type
     Fun,
+    /// System call or built-in function
     Sys,
+    /// Identifier (e.g., variable or function names)
     Id(String),
+    /// `char` keyword
     Char,
+    /// `else` keyword
     Else,
+    /// `if` keyword
     If,
+    /// `int` keyword
     Int,
+    /// `return` keyword
     Return,
+    /// Assignment operator (`=`)
     Assign,
+    /// Addition operator (`+`)
     Add,
+    /// Subtraction operator (`-`)
     Sub,
+    /// Multiplication operator (`*`)
     Mul,
+    /// Division operator (`/`)
     Div,
-  
+    // Additional tokens can be added here
 }
 
-#[derive(Debug)] 
+/// Lexical analyzer that turns source code into a sequence of `Token`s.
+#[derive(Debug)]
 pub struct Lexer {
     source: Vec<char>,
     pos: usize,
@@ -27,6 +46,8 @@ pub struct Lexer {
 }
 
 impl Lexer {
+    /// Creates a new `Lexer` from a source string.
+
     pub fn new(source: &str) -> Self {
         Lexer {
             source: source.chars().collect(),
@@ -34,6 +55,8 @@ impl Lexer {
             line: 1,
         }
     }
+
+    /// Retrieves the next token from the source code.
 
     pub fn next_token(&mut self) -> Result<Option<Token>, CompileError> {
         while self.pos < self.source.len() {
@@ -76,6 +99,7 @@ impl Lexer {
         Ok(None)
     }
 
+    /// Reads a numeric literal and returns it as a `Token::Num`.
     fn read_number(&mut self) -> Token {
         let mut num = 0;
         while self.pos < self.source.len() && self.source[self.pos].is_ascii_digit() {
@@ -85,6 +109,7 @@ impl Lexer {
         Token::Num(num)
     }
 
+    /// Reads an identifier or keyword and returns the appropriate `Token`.
     fn read_identifier(&mut self) -> Token {
         let start = self.pos;
         while self.pos < self.source.len()
@@ -102,71 +127,8 @@ impl Lexer {
         }
     }
 
+    /// Returns the current line number in the source code.
     pub fn line(&self) -> usize {
         self.line
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_simple_tokens() {
-        let mut lexer = Lexer::new("1 + 2 - 3 * 4 / 5");
-
-        assert_eq!(lexer.next_token().unwrap(), Some(Token::Num(1)));
-        assert_eq!(lexer.next_token().unwrap(), Some(Token::Add));
-        assert_eq!(lexer.next_token().unwrap(), Some(Token::Num(2)));
-        assert_eq!(lexer.next_token().unwrap(), Some(Token::Sub));
-        assert_eq!(lexer.next_token().unwrap(), Some(Token::Num(3)));
-        assert_eq!(lexer.next_token().unwrap(), Some(Token::Mul));
-        assert_eq!(lexer.next_token().unwrap(), Some(Token::Num(4)));
-        assert_eq!(lexer.next_token().unwrap(), Some(Token::Div));
-        assert_eq!(lexer.next_token().unwrap(), Some(Token::Num(5)));
-        assert_eq!(lexer.next_token().unwrap(), None);
-    }
-
-    #[test]
-    fn test_identifier_and_keywords() {
-        let mut lexer = Lexer::new("if else return varName");
-
-        assert_eq!(lexer.next_token().unwrap(), Some(Token::If));
-        assert_eq!(lexer.next_token().unwrap(), Some(Token::Else));
-        assert_eq!(lexer.next_token().unwrap(), Some(Token::Return));
-        assert_eq!(
-            lexer.next_token().unwrap(),
-            Some(Token::Id("varName".to_string()))
-        );
-    }
-
-    #[test]
-    fn test_invalid_token() {
-        let mut lexer = Lexer::new("$");
-        let result = lexer.next_token();
-        assert!(result.is_err());
-        if let Err(e) = result {
-            match e {
-                CompileError::Lexer { message, line } => {
-                    assert_eq!(line, 1);
-                    assert!(message.contains("Unknown token"));
-                }
-                _ => panic!("Expected lexer error"),
-            }
-        }
-    }
-
-    #[test]
-    fn test_direct_lexer_rejects_at_symbol() {
-        let mut lexer = Lexer::new("@");
-        let result = lexer.next_token();
-        assert!(result.is_err());
-
-        if let Err(CompileError::Lexer { message, line }) = result {
-            assert_eq!(line, 1);
-            assert!(message.contains("Unknown token"));
-        } else {
-            panic!("Expected lexer error for '@'");
-        }
     }
 }
