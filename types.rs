@@ -1,28 +1,29 @@
+/// Represents C types in the compiler
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Type {
     Char,
     Int,
-    Ptr(Box<Type>), // Pointer to another type (e.g., `int*`)
-    Void,            // For functions with no return type
+    Ptr(Box<Type>),
+    Void,
 }
 
 impl Type {
-    /// Returns the size (in bytes) of the type.
+    /// Gets the size of the type in bytes
     pub fn size(&self) -> usize {
         match self {
             Type::Char => 1,
-            Type::Int => 8, // C4 uses 8-byte integers (`#define int long long`)
-            Type::Ptr(_) => 8, // Pointers are 8 bytes (64-bit)
+            Type::Int => 8,
+            Type::Ptr(_) => 8,
             Type::Void => 0,
         }
     }
 
-    /// Checks if a type is a pointer (e.g., `int*`, `char****`).
+    /// Checks if the type is a pointer
     pub fn is_ptr(&self) -> bool {
         matches!(self, Type::Ptr(_))
     }
 
-    /// Dereferences a pointer type (e.g., `int*` → `int`).
+    /// Gets the type this pointer points to
     pub fn deref(&self) -> Option<Type> {
         match self {
             Type::Ptr(inner) => Some(*inner.clone()),
@@ -30,7 +31,7 @@ impl Type {
         }
     }
 
-    /// Creates a pointer to this type (e.g., `int` → `int*`).
+    /// Creates a pointer to this type
     pub fn ptr_to(&self) -> Type {
         Type::Ptr(Box::new(self.clone()))
     }
