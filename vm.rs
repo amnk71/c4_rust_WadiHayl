@@ -1,3 +1,4 @@
+/// Virtual machine instruction set
 pub enum Instruction {
     Push(i64),
     Add,
@@ -7,6 +8,7 @@ pub enum Instruction {
   
 }
 
+/// Stack-based execution engine
 pub struct VM {
     stack: Vec<i64>,
     code: Vec<Instruction>,
@@ -14,10 +16,12 @@ pub struct VM {
 }
 
 impl VM {
+    /// Creates new VM with given bytecode
     pub fn new(code: Vec<Instruction>) -> Self {
         VM { stack: Vec::new(), code, pc: 0 }
     }
-
+    
+    /// Executes loaded program
     pub fn run(&mut self) -> i64 {
         while self.pc < self.code.len() {
             match self.code[self.pc] {
