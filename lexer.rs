@@ -12,6 +12,8 @@ pub enum Token {
     Assign,
     Add,
     Sub,
+    Mul,
+    Div,
     // ... (other tokens)
 }
 
@@ -39,6 +41,8 @@ impl Lexer {
                 'a'..='z' | 'A'..='Z' | '_' => return Some(self.read_identifier()),
                 '+' => { self.pos += 1; return Some(Token::Add); }
                 '-' => { self.pos += 1; return Some(Token::Sub); }
+                '*' => { self.pos += 1; return Some(Token::Mul); } // ✅
+                '/' => { self.pos += 1; return Some(Token::Div); } // ✅
                 // ... (handle other operators)
                 _ => panic!("Unknown token at line {}", self.line),
             }
