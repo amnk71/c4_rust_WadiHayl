@@ -1,6 +1,7 @@
 use crate::lexer::{Token, Lexer};
 use crate::error::CompileError;
 
+/// Abstract syntax tree node types
 #[derive(Debug)]
 pub enum Expr {
     Number(i64),
@@ -8,6 +9,7 @@ pub enum Expr {
     Variable(String),
 }
 
+/// Recursive descent parser implementation
 #[derive(Debug)]
 pub struct Parser {
     lexer: Lexer,
@@ -15,6 +17,7 @@ pub struct Parser {
 }
 
 impl Parser {
+    /// Creates new parser from lexer
     pub fn new(lexer: Lexer) -> Result<Self, CompileError> {
         let mut parser = Parser {
             lexer,
@@ -29,6 +32,7 @@ impl Parser {
         Ok(())
     }
 
+    /// Parses an expression from tokens
     pub fn parse_expr(&mut self) -> Result<Expr, CompileError> {
         self.parse_add_sub()
     }
