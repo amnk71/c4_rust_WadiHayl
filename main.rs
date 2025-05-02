@@ -1,0 +1,39 @@
+mod lexer;
+mod parser;
+mod vm;
+
+use lexer::Lexer;
+use parser::Parser;
+use vm::{VM, Instruction};
+
+fn main() {
+    let source = "1 + 2 * 3";
+    let lexer = Lexer::new(source);
+    let mut parser = Parser::new(lexer);
+    let expr = parser.parse_expr();
+
+    // Compile to VM instructions
+    let code = compile_expr(expr);
+    let mut vm = VM::new(code);
+    let result = vm.run();
+    println!("Result: {}", result); // Output: 7
+}
+
+fn compile_expr(expr: parser::Expr) -> Vec<Instruction> {
+    match expr {
+        parser::Expr::Number(n) => vec![Instruction::Push(n)],
+        parser::Expr::BinaryOp(left, op, right) => {
+            let mut code = compile_expr(*left);
+            code.extend(compile_expr(*right));
+            match op {
+                lexer::Token::Add => code.push(Instruction::Add),
+                lexer::Token::Sub => code.push(Instruction::Sub),
+                lexer::Token::Mul => code.push(Instruction::Mul),
+                lexer::Token::Div => code.push(Instruction::Div),
+                _ => panic!("Unsupported operator"),
+            }
+            code
+        }
+        _ => panic!("Unsupported expression"),
+    }
+}
