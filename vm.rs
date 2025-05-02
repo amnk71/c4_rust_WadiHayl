@@ -43,10 +43,42 @@ impl VM {
                     self.stack.push(b / a);
                 }
                 // ... (other instructions)
-                _ => panic!("Unknown instruction"),
+    
             }
             self.pc += 1;
         }
         self.stack.pop().unwrap_or(0)
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_arithmetic_execution() {
+        let code = vec![
+            Instruction::Push(2),
+            Instruction::Push(3),
+            Instruction::Mul,
+            Instruction::Push(4),
+            Instruction::Add,
+        ];
+        let mut vm = VM::new(code);
+        let result = vm.run();
+        assert_eq!(result, 10); // (2 * 3) + 4 = 10
+    }
+
+    #[test]
+    fn test_division_and_subtraction() {
+        let code = vec![
+            Instruction::Push(20),
+            Instruction::Push(5),
+            Instruction::Div,
+            Instruction::Push(2),
+            Instruction::Sub,
+        ];
+        let mut vm = VM::new(code);
+        let result = vm.run();
+        assert_eq!(result, 2); // (20 / 5) - 2 = 2
     }
 }
